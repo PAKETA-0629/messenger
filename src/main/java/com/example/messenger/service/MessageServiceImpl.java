@@ -30,7 +30,14 @@ public class MessageServiceImpl {
         messageRepository.saveMessage(
                 message.getConversation(), message.getSender().getId(), message.getMessageType().toString(),
                 message.getText(), message.getCreateAt(), message.getMessageStatus().toString());
+    }
 
+    public void updateMessage(Message message) {
+        messageRepository.updateMessage(message.getText(), message.getCreateAt(), message.getMessageStatus().toString());
+    }
+
+    public void deleteMessage(Message message) {
+        messageRepository.deleteMessageByTextAndCreateAtAndConversation(message.getText(), message.getCreateAt(), message.getConversation());
     }
 
 

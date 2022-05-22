@@ -40,4 +40,16 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             @Param("conversationId") Long conversationId, @Param("senderId") Long senderId,
             @Param("messageType") String messageType, @Param("text") String text,
             @Param("createdAt") Timestamp createdAt, @Param("status") String status);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true, value =
+                    "UPDATE messages " +
+                    "SET message = :text, created_at = :createdAt, message_status = :status " +
+                    "WHERE message = :text AND created_at = :createdAt")
+    void updateMessage(@Param("text") String text, @Param("createdAt") Timestamp createdAt, @Param("status") String status);
+
+    @Modifying
+    @Transactional
+    void deleteMessageByTextAndCreateAtAndConversation(String text, Timestamp createdAt, Long conversationId);
 }

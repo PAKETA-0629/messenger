@@ -87,7 +87,32 @@ public class WebSocketController {
         Map<String, Object> map = new HashMap<>();
         map.put("payload-class", "message");
         message.setMessageStatus(MessageStatus.DELIVERED);
+
         messageService.saveMessage(message);
+        List<User> users = userService.findAllParticipants(message.getConversation());
+        for (User participant: users) {
+            simpMessagingTemplate.convertAndSendToUser(participant.getNickname(), "/queue/position-updates", message.convertToDto(), map);
+        }
+
+    }
+    @MessageMapping("/message/change-status")
+    public void changeStatus(@Payload MessageProfile messageProfile, Principal user) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("payload-class", "message");
+        Message message = messageService.convertDtoToMessage(messageProfile, messageProfile.getSender().getUser().getNickname());
+        message.setMessageStatus(MessageStatus.READ);
+        messageService.updateMessage(message);
+
+        simpMessagingTemplate.convertAndSendToUser(message.getSender().getUser().getNickname(), "/queue/position-updates", message.convertToDto(), map);
+    }
+
+    @MessageMapping("/message/delete")
+    public void deleteMessage(@Payload MessageProfile messageProfile, Principal user) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("payload-class", "message");
+        map.put("destiny", "delete");
+        Message message = messageService.convertDtoToMessage(messageProfile, messageProfile.getSender().getUser().getNickname());
+        messageService.deleteMessage(message);
         List<User> users = userService.findAllParticipants(message.getConversation());
         for (User participant: users) {
             simpMessagingTemplate.convertAndSendToUser(participant.getNickname(), "/queue/position-updates", message.convertToDto(), map);

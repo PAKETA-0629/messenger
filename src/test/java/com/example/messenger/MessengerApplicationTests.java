@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 class MessengerApplicationTests {
@@ -28,30 +30,11 @@ class MessengerApplicationTests {
     @Autowired
     private ConversationServiceImpl conversationService;
 
-    @Test
-    void contextLoads() {
-        Message message = new Message();
-        Conversation conversation = new Conversation();
-        conversation.setId(1L);
-        User user = new User();
-        user.setId(1L);
-        message.setConversation(conversation);
-        message.setSender(user);
-        message.setMessageType(MessageType.TEXT);
-        message.setMessageStatus(MessageStatus.DELIVERED);
-        message.setText("SQL DATABASE TEST");
-        message.setCreateAt(new Date(new java.util.Date().getTime()));
 
-        messageService.pullMessageByConversation(conversation);
-        messageService.saveMessage(message);
-    }
 
     @Test
     void test() {
-        Conversation conversation = new Conversation();
-        conversation.setId(1L);
-        List<Message> message = messageService.pullMessageByConversation(conversation);
-        System.out.println(message);
+
     }
 
 }
